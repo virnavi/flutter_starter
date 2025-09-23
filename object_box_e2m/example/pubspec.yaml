@@ -1,13 +1,12 @@
 name: example
 description: "A new Flutter project."
 
-
 publish_to: 'none' 
 
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.8.1
+  sdk: ^3.7.1
 
 dependencies:
   flutter:
@@ -18,7 +17,7 @@ dependencies:
   common_sdk:
     git:
       url: https://github.com/virnavi/flutter_starter.git
-      ref: v0.0.3
+      ref: v0.0.4
       path: common_sdk
   objectbox: ^4.3.0
   objectbox_flutter_libs: ^4.3.0
