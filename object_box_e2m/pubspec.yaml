@@ -1,6 +1,6 @@
 name: object_box_e2m
 description: "A new Flutter project."
-version: 0.0.1
+version: 0.0.3
 homepage:
 publish_to: none
 
@@ -14,7 +14,7 @@ dependencies:
   common_sdk:
     git:
       url: https://github.com/virnavi/flutter_starter.git
-      ref: v0.0.2
+      ref: v0.0.3
       path: common_sdk
 
   objectbox: ^4.3.0

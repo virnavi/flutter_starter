@@ -4,7 +4,7 @@ import 'package:common_sdk/src/models/models.dart';
 
 import 'model_stream.dart';
 
-class ModelObjectStreamImpl<Model, Entity> extends ModelStream<Model> {
+class ModelListStreamImpl<Model, Entity> extends ModelStream<Model> {
   late final Stream<List<Entity>?> _stream;
   StreamSubscription? subscription;
   final controller = StreamController<Optional<Model>>();
@@ -15,7 +15,7 @@ class ModelObjectStreamImpl<Model, Entity> extends ModelStream<Model> {
 
   Optional<Model> Function(Entity? entity) convertToModel;
 
-  ModelObjectStreamImpl({
+  ModelListStreamImpl({
     required Stream<List<Entity>?> stream,
     required this.convertToModel,
   }) {

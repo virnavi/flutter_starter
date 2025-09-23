@@ -1,6 +1,5 @@
 import 'package:common_sdk/common_sdk.dart';
 
-import '../streams/model_stream.dart';
 
 abstract class BaseNoSqlDao<Model, IdType> {
   Future<Optional<Model>> getById(

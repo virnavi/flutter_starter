@@ -34,7 +34,7 @@ abstract class BaseNoSqlDaoImpl<Model, Entity extends BaseNoSqlEntity, IdType>
     final dataListStream = queryBuilder
         .watch(triggerImmediately: true)
         .map((query) => query.find());
-    return ModelObjectListStreamImpl<Model, Entity>(
+    return ModelListStreamImpl<Model, Entity>(
       stream: dataListStream,
       convertToModel: convertToModel,
     );

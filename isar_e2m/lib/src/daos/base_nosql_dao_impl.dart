@@ -32,7 +32,7 @@ abstract class BaseNoSqlDaoImpl<Model, Entity extends BaseNoSqlEntity, IdType>
   }) async {
     final query = await idEqual(entityCollection.where(), id).build();
     final dataListStream = query.watch(fireImmediately: true);
-    return ModelObjectStreamImpl<Model, Entity>(
+    return ModelListStreamImpl<Model, Entity>(
       stream: dataListStream,
       convertToModel: convertToModel,
     );

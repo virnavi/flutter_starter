@@ -149,8 +149,8 @@ packages:
     dependency: "direct main"
     description:
       path: common_sdk
-      ref: "v0.0.2"
-      resolved-ref: "2f1c4056e57884fdf8381900712a0da6be85b0cf"
+      ref: "v0.0.3"
+      resolved-ref: "4795540883240dbe7bdcbfdac79b7181789c7af8"
       url: "https://github.com/virnavi/flutter_starter.git"
     source: git
     version: "0.0.2"
@@ -407,7 +407,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.1"
+    version: "0.0.3"
   objectbox:
     dependency: "direct main"
     description:
