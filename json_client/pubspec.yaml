@@ -4,8 +4,8 @@ version: 0.0.1
 homepage:
 
 environment:
-  sdk: '>=3.3.4 <4.0.0'
-  flutter: ">=3.0.0"
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: ">=3.4.0"
 
 dependencies:
   flutter:
@@ -13,9 +13,9 @@ dependencies:
   common_sdk:
     git:
       url: https://github.com/virnavi/flutter_starter.git
-      ref: v0.0.1
+      ref: v0.0.2
       path: common_sdk
-  dio: ^5.7.0
+  dio: ^5.9.0
 
 dev_dependencies:
   flutter_test:

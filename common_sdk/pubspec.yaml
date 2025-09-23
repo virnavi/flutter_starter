@@ -1,16 +1,16 @@
 name: common_sdk
 description: "Common Packages"
-version: 0.0.1
+version: 0.0.2
 homepage: asd
 
 environment:
-  sdk: '>=3.3.4 <4.0.0'
-  flutter: ">=3.0.0"
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: ">=3.4.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  get_it: ^7.7.0
+  get_it: ^8.2.0
   share_plus: ^9.0.0
 
 dev_dependencies:

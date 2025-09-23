@@ -1,3 +1,4 @@
+part of 'http_client.dart';
 class ApiResponse<R, ER> {
   final int code;
   final R? response;
@@ -5,7 +6,7 @@ class ApiResponse<R, ER> {
   final Exception? exception;
 
   bool get isSuccess => 200 <= code && code < 300;
-  bool get isError => 0 < code;
+  bool get isError => 0 < code && !isSuccess;
   bool get isException => 0 == code;
 
   ApiResponse({

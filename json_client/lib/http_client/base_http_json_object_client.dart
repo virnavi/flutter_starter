@@ -1,45 +1,30 @@
-import 'dart:convert';
-import 'dart:developer';
-
-import 'package:common_sdk/common_sdk.dart';
-import 'package:dio/dio.dart';
-
-import 'api_response.dart';
-import 'base_json.dart';
-import 'enums/api_method.dart';
-
-class BaseHttpJsonObjectClientOptions {
-  final Duration connectTimeout;
-  final Duration receiveTimeout;
-  final Duration sendTimeout;
-
-  BaseHttpJsonObjectClientOptions({
-    this.connectTimeout = const Duration(seconds: 30),
-    this.receiveTimeout = const Duration(seconds: 30),
-    this.sendTimeout = const Duration(seconds: 30),
-  });
-}
+part of 'http_client.dart';
 
 class BaseHttpJsonObjectClient {
   static String tag = '';
   final String baseUrl;
   final BaseHttpJsonObjectClientOptions options;
-  final Map<String, dynamic> Function(String s)? onTransformRawData;
+  final Map<String, dynamic> Function(String data, Response? response)?
+  onTransformRawData;
+  final int Function(Map<String, dynamic> data, Response? response)?
+  onStatusCodeTransform;
 
   Dio? _client;
 
   Dio get client => _client ??= Dio(
-        BaseOptions(
-          connectTimeout: options.connectTimeout,
-          receiveTimeout: options.receiveTimeout,
-          sendTimeout: options.sendTimeout,
-        ),
-      );
+    BaseOptions(
+      connectTimeout: options.connectTimeout,
+      receiveTimeout: options.receiveTimeout,
+      sendTimeout: options.sendTimeout,
+      responseType: options.responseType,
+    ),
+  );
 
   BaseHttpJsonObjectClient({
     required this.baseUrl,
     required this.options,
     this.onTransformRawData,
+    this.onStatusCodeTransform,
   });
 
   Future<ApiResponse<Res, ErrorRes>> call<Data, Res, ErrorRes>({
@@ -64,41 +49,36 @@ class BaseHttpJsonObjectClient {
         correlationId: correlationId,
       );
 
+      final statusCode = response.statusCode ?? 0;
+      Logger.shared.log(
+        'status code: $statusCode',
+        tag: tag,
+        correlationId: correlationId,
+      );
       if (response.data != null) {
-        final statusCode = response.statusCode ?? 0;
-        Logger.shared.log(
-          'status code: $statusCode',
-          tag: tag,
-          correlationId: correlationId,
-        );
         Logger.shared.log(
           'res: ${response.data}',
           tag: tag,
           correlationId: correlationId,
         );
+
         if (200 <= statusCode && statusCode < 300) {
-          if (response.data?["isSuccess"] ?? true) {
-            return ApiResponse<Res, ErrorRes>(
-                code: statusCode,
-                response: convertSuccess(response.data ?? {}));
-          } else {
-            return ApiResponse<Res, ErrorRes>(
-                code: 400,
-                errorResponse:
-                    convertError(response.data as Map<String, dynamic>));
-          }
+          return ApiResponse<Res, ErrorRes>(
+            code: statusCode,
+            response: convertSuccess(response.data ?? {}),
+          );
         } else {
-          if (statusCode > 0) {
-            return ApiResponse<Res, ErrorRes>(
-                code: statusCode,
-                errorResponse:
-                    convertError(response.data as Map<String, dynamic>));
-          }
+          return ApiResponse<Res, ErrorRes>(
+            code: statusCode,
+            errorResponse: convertError(response.data as Map<String, dynamic>),
+          );
         }
       }
     } on DioException catch (e) {
+      log('$correlationId    exception: ${e.toString()}');
+      print(e);
       if (e.response != null && e.response?.data != null) {
-        final res = onTransformRawData!.call(e.response!.data);
+        final res = onTransformRawData!.call(e.response!.data, e.response);
 
         Logger.shared.log(
           'error status code: ${e.response?.statusCode ?? -1}',
@@ -111,11 +91,11 @@ class BaseHttpJsonObjectClient {
           correlationId: correlationId,
         );
         return ApiResponse<Res, ErrorRes>(
-            code: e.response?.statusCode ?? -1,
-            errorResponse: convertError(res));
+          code: e.response?.statusCode ?? -1,
+          errorResponse: convertError(res),
+        );
       } else {
-        return ApiResponse<Res, ErrorRes>(
-            code: -1, exception: Exception('Invalid Error Response'));
+        return ApiResponse<Res, ErrorRes>(code: -1, exception: e);
       }
     } on Exception catch (e, _) {
       log('$correlationId    exception: ${e.toString()}');
@@ -124,7 +104,9 @@ class BaseHttpJsonObjectClient {
 
     log('$correlationId    error: Unexpected Error');
     return ApiResponse<Res, ErrorRes>(
-        code: -1, exception: Exception('Unexpected Error'));
+      code: -1,
+      exception: Exception('Unexpected Error'),
+    );
   }
 
   Future<Response<Map<String, dynamic>>> _callMethod<Data, Res, ErrorRes>({
@@ -165,49 +147,37 @@ class BaseHttpJsonObjectClient {
 
     if (req is BaseJson) {
       Logger.shared.log(
-        ' with data: ${req.toJson().toString()}',
+        ' with data 1: ${req.toJson().toString()}',
         tag: tag,
         correlationId: correlationId,
       );
     } else {
       Logger.shared.log(
-        ' with data: ${req?.toString()}',
+        ' with data 2: ${req?.toString()}',
         tag: tag,
         correlationId: correlationId,
       );
     }
-
+    Logger.shared.log(
+      ' method: ${method.toString()}',
+      tag: tag,
+      correlationId: correlationId,
+    );
     if (method == ApiMethod.post) {
-      return _post(
-        path: newPath,
-        headers: headers,
-        req: req,
-      );
+      return _post(path: newPath, headers: headers, req: req);
     } else if (method == ApiMethod.put) {
-      return _put(
-        path: newPath,
-        headers: headers,
-        req: req,
-      );
+      return _put(path: newPath, headers: headers, req: req);
     } else if (method == ApiMethod.delete) {
-      return _delete(
-        path: newPath,
-        headers: headers,
-        req: req,
-      );
+      return _delete(path: newPath, headers: headers, req: req);
     }
     if (req is BaseJson) {
-      return _get(
-        path: newPath,
-        headers: headers,
-        req: req.toJson(),
-      );
+      return _get(path: newPath, headers: headers, req: req.toJson());
     }
     throw Exception("Request Data Must Extend BaseJson Class for Get Method !");
   }
 
   Future<Response<Map<String, dynamic>>>
-      _get<Data extends BaseJson, Res, ErrorRes>({
+  _get<Data extends BaseJson, Res, ErrorRes>({
     required String path,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? req,
@@ -216,9 +186,7 @@ class BaseHttpJsonObjectClient {
       await client.get<String>(
         baseUrl + path,
         queryParameters: req ?? {},
-        options: Options(
-          headers: headers,
-        ),
+        options: Options(headers: headers),
       ),
     );
   }
@@ -228,15 +196,12 @@ class BaseHttpJsonObjectClient {
     Map<String, dynamic>? headers,
     Data? req,
   }) async {
-    return convertRawResponse(
-      await client.post<String>(
-        baseUrl + path,
-        data: req,
-        options: Options(
-          headers: headers,
-        ),
-      ),
+    final res = await client.post<String>(
+      baseUrl + path,
+      data: req,
+      options: Options(headers: headers),
     );
+    return convertRawResponse(res);
   }
 
   Future<Response<Map<String, dynamic>>> _put<Data, Res, ErrorRes>({
@@ -248,9 +213,7 @@ class BaseHttpJsonObjectClient {
       await client.put<String>(
         baseUrl + path,
         data: req,
-        options: Options(
-          headers: headers,
-        ),
+        options: Options(headers: headers),
       ),
     );
   }
@@ -264,24 +227,24 @@ class BaseHttpJsonObjectClient {
       await client.delete<String>(
         baseUrl + path,
         queryParameters: (req is BaseJson) ? req.toJson() : {},
-        options: Options(
-          headers: headers,
-        ),
+        options: Options(headers: headers),
       ),
     );
   }
 
   Response<Map<String, dynamic>> convertRawResponse(Response<String> res) {
+    final data =
+        onTransformRawData?.call(res.data ?? '', res) ??
+        json.decode(res.data ?? '{}');
     return Response(
       requestOptions: res.requestOptions,
-      statusCode: res.statusCode,
+      statusCode: onStatusCodeTransform?.call(data, res) ?? res.statusCode,
       statusMessage: res.statusMessage,
       isRedirect: res.isRedirect,
       redirects: res.redirects,
       extra: res.extra,
       headers: res.headers,
-      data: onTransformRawData?.call(res.data ?? '') ??
-          json.decode(res.data ?? '{}'),
+      data: data,
     );
   }
 }
