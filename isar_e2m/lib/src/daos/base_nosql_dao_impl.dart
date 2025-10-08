@@ -1,5 +1,5 @@
 import 'package:common_sdk/common_sdk.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 
 import '../entities/base_nosql_entity.dart';
 import 'base_nosql_dao.dart';

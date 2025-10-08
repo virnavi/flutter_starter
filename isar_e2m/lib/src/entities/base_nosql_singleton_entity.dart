@@ -1,5 +1,5 @@
 
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 
 import 'base_nosql_entity.dart';
 import '../constants/db_constants.dart';
