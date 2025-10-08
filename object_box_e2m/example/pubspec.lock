@@ -149,11 +149,11 @@ packages:
     dependency: "direct main"
     description:
       path: common_sdk
-      ref: "v0.0.3"
-      resolved-ref: "4795540883240dbe7bdcbfdac79b7181789c7af8"
+      ref: "v0.0.4"
+      resolved-ref: "8614b4b58e8756276e67134d979c97c7dcc36592"
       url: "https://github.com/virnavi/flutter_starter.git"
     source: git
-    version: "0.0.2"
+    version: "0.0.4"
   convert:
     dependency: transitive
     description:

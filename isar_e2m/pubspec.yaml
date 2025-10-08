@@ -3,7 +3,7 @@ description: "Isar Wrapper"
 version: 0.0.4
 homepage: https://github.com/virnavi/flutter_starter/
 
-isar_version: &isar_version 3.1.8
+isar_version: &isar_version 3.3.0-dev.3
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -19,12 +19,10 @@ dependencies:
       path: common_sdk
 
 
-  isar:
+  isar_community:
     version: *isar_version
-    hosted: https://pub.isar-community.dev/
-  isar_flutter_libs: # contains Isar Core
+  isar_community_flutter_libs: # contains Isar Core
     version: *isar_version
-    hosted: https://pub.isar-community.dev/
 
 dev_dependencies:
   flutter_test:

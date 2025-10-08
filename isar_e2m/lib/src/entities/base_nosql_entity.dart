@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 
 class BaseNoSqlEntity {
   Id tempId = Isar.autoIncrement;
