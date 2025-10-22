@@ -1,6 +1,6 @@
 name: isar_e2m
 description: "Isar Wrapper"
-version: 0.0.4
+version: 0.0.5
 homepage: https://github.com/virnavi/flutter_starter/
 
 isar_version: &isar_version 3.3.0-dev.3
@@ -15,7 +15,7 @@ dependencies:
   common_sdk:
     git:
       url: https://github.com/virnavi/flutter_starter.git
-      ref: v0.0.4
+      ref: v0.0.5
       path: common_sdk
 
 
