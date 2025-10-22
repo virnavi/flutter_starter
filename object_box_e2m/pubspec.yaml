@@ -16,7 +16,6 @@ dependencies:
       url: https://github.com/virnavi/flutter_starter.git
       ref: v0.0.5
       path: common_sdk
-
   objectbox: ^4.3.0
   objectbox_flutter_libs: ^4.3.0
 
